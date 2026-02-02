@@ -1,0 +1,23 @@
+source_url = 'https://somewhere.invalid/path/binary'
+action = 'tar'
+strip_components = 1
+
+[[members]]
+name = "member-1"
+dest = "bin-1"
+perms = 0o755
+
+[members.checksum.values]
+linux-x86_64 = 'aaaabbbbcccdddd01010101'
+
+
+[[members]]
+name = "path/member-2"
+dest = "bin-2"
+perms = 0o755
+
+[members.checksum]
+key = "$arch"
+
+[members.checksum.values]
+x86_64 = 'aaaabbbbcccdddd01010101'

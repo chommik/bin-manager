@@ -1,0 +1,7 @@
+source_url = 'https://somewhere.invalid/path/binary'
+action = 'direct'
+dest = 'bin1'
+perms = 0o755
+
+[checksum.values]
+linux-x86_64 = "aaaaccccdadadada"
