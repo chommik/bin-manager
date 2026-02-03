@@ -1,6 +1,12 @@
 [package]
 name = "bin-manager"
 version = "0.1.0"
+description = "Bootstrap your ~/.local/bin (or other directory) with precompiled binaries"
+authors = [
+    "Rafal Macyszyn <rafal@v92.pl>",
+]
+license = "BSD-2"
+license-file = "LICENSE"
 edition = "2024"
 
 [dependencies]
