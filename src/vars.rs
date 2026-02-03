@@ -13,7 +13,16 @@ pub fn current_machine_vars() -> HashMap<String, String> {
         String::from("os_libc"),
         String::from(match uname_os.as_str() {
             "darwin" => "darwin",
-            "linux" => "linux-gnu",
+            "linux" => "linux-gnu", // TODO: detect correct libc
+            s => s,
+        }),
+    );
+
+    ret.insert(
+        String::from("os_musl"),
+        String::from(match uname_os.as_str() {
+            "darwin" => "darwin",
+            "linux" => "linux-musl",
             s => s,
         }),
     );
@@ -27,16 +36,27 @@ pub fn current_machine_vars() -> HashMap<String, String> {
         }),
     );
 
+    let os_arch = uname.machine().to_str().unwrap().to_string();
+    ret.insert(String::from("arch"), os_arch.clone());
     ret.insert(
-        String::from("arch"),
-        uname.machine().to_str().unwrap().to_string(),
+        String::from("cpu"),
+        String::from(match os_arch.as_str() {
+            "x86_64" => "amd64",
+            a => a,
+        }),
     );
+
+    ret.insert("triplet".to_string(), current_platform::CURRENT_PLATFORM.to_string());
 
     ret
 }
 
 pub fn find_templated_checksum(checksum: &ChecksumDefinition) -> String {
-    let checksum_idx = strfmt::strfmt(&checksum.key, &current_machine_vars()).unwrap();
+    let checksum_key = match &checksum.key {
+        Some(ck) => ck,
+        None => current_platform::CURRENT_PLATFORM
+    };
+    let checksum_idx = strfmt::strfmt(checksum_key, &current_machine_vars()).unwrap();
     debug!("looking for checksum with key: {}", checksum_idx);
 
     checksum

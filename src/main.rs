@@ -1,7 +1,7 @@
 use crate::config::process_config_file;
 use args::Args;
 use clap::Parser;
-use log::{LevelFilter, debug, warn};
+use log::{debug, warn, LevelFilter};
 use std::fs;
 use std::path::{Path, PathBuf};
 

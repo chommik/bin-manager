@@ -1,0 +1,10 @@
+action = 'direct'
+dest = 'bin3'
+perms = 0o755
+
+[source_urls]
+aarch64-apple-darwin = 'https://somewhere.invalid/path/binary/aarch64-apple-darwin'
+x86_64-unknown-linux-gnu = 'https://somewhere.invalid/path/binary/x86_64-unknown-linux-gnu'
+
+[checksum.values]
+linux-x86_64 = "aaaaccccdadadada"

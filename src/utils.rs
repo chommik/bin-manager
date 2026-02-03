@@ -1,7 +1,8 @@
-use std::{fs, io};
+use sha2::{Digest, Sha256};
 use std::io::BufReader;
 use std::path::Path;
-use sha2::{Digest, Sha256};
+use std::{fs, io};
+
 pub fn calculate_checksum(path: &Path) -> Result<Vec<u8>, String> {
     let mut digest = Sha256::new();
 

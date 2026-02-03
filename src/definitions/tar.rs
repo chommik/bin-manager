@@ -12,7 +12,7 @@ pub fn process_tar_definition(
     source_url: &str,
     definition: &TarBinaryDefinition,
     target_dir: &Path,
-    skip_checksum: bool,
+    _skip_checksum: bool,
     dry_run: bool,
 ) -> Result<(), String> {
     let interpolated_url_str = strfmt::strfmt(source_url, &current_machine_vars())

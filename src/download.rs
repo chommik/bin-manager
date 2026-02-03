@@ -1,11 +1,11 @@
+use crate::config::ChecksumDefinition;
+use crate::{utils, vars};
+use data_encoding::HEXLOWER;
+use indicatif::{ProgressBar, ProgressStyle};
+use log::{debug, info};
 use std::fs;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
-use indicatif::{ProgressBar, ProgressStyle};
-use log::{debug, info};
-use data_encoding::HEXLOWER;
-use crate::config::ChecksumDefinition;
-use crate::{utils, vars};
 
 pub fn download_file<'a>(url: &str, download_dest: &'a Path) -> Result<&'a Path, String> {
     let client = reqwest::blocking::Client::new();
