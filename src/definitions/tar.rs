@@ -1,5 +1,5 @@
 use crate::config::{TarBinaryDefinition, TarMemberDefinition};
-use crate::download::{download_file, is_download_necessary};
+use crate::download::{download_to_destination, download_to_tempfile, is_download_necessary};
 use crate::vars::current_machine_vars;
 use log::{debug, info};
 use std::io::Read;
@@ -45,23 +45,18 @@ pub fn process_tar_definition(
                 .next_back()
                 .unwrap(),
         );
-    let tar_dir_name = tar_temp_path.parent().unwrap();
 
-    if !fs::exists(&tar_temp_path).map_err(|e| e.to_string())? {
-        fs::create_dir_all(tar_dir_name).map_err(|e| e.to_string())?;
-        download_file(&interpolated_url_str, &tar_temp_path)
-            .expect("source tar file should download successfully");
-    }
+    fs::create_dir_all(tar_temp_path.parent().unwrap()).map_err(|e| e.to_string())?;
 
-    let tar_file = fs::File::open(&tar_temp_path).expect("source tar file should open");
+    debug!("Fetching tar from {:?} into {:?}", interpolated_url_str, tar_temp_path);
 
+    let tar_file = download_to_tempfile(&interpolated_url_str, &tar_temp_path)?;
     let stream: Box<dyn Read> = match tar_temp_path.extension().unwrap().to_str().unwrap() {
         "gz" => Box::new(flate2::read::GzDecoder::new(tar_file)),
         "bz2" => Box::new(bzip2::read::BzDecoder::new(tar_file)),
         "xz" => Box::new(xz::read::XzDecoder::new(tar_file)),
         _ => todo!("unimplemented"),
     };
-
     let mut tar_archive = tar::Archive::new(stream);
 
     for entry in tar_archive.entries().unwrap() {
@@ -77,6 +72,9 @@ pub fn process_tar_definition(
 
         let dest_path = target_dir.join(&entry_path);
         if let Some(member) = members_to_update.iter().find(|m| m.dest == entry_path) {
+            let dest_dir = dest_path.parent().unwrap();
+            fs::create_dir_all(dest_dir).map_err(|e| e.to_string())?;
+
             let mut dest_file =
                 fs::File::create(&dest_path).expect("destination file should open successfully");
 

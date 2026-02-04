@@ -1,5 +1,5 @@
 use crate::config::DirectBinaryDefinition;
-use crate::download::{download_file, is_download_necessary};
+use crate::download::{download_to_destination, is_download_necessary};
 use log::{debug, info};
 use std::fs;
 use std::os::unix::fs::PermissionsExt;
@@ -27,7 +27,7 @@ pub fn process_direct_definition(
     );
 
     if !dry_run {
-        download_file(source_url, &dest_path)?;
+        download_to_destination(source_url, &dest_path)?;
         fs::set_permissions(dest_path, fs::Permissions::from_mode(definition.perms))
             .map_err(|e| e.to_string())?;
     }
