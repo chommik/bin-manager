@@ -3,7 +3,6 @@ use crate::{utils, vars};
 use data_encoding::HEXLOWER;
 use indicatif::{ProgressBar, ProgressStyle};
 use log::{debug, info};
-use reqwest::StatusCode;
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom, Write};

@@ -1,5 +1,5 @@
 use crate::config::{TarBinaryDefinition, TarMemberDefinition};
-use crate::download::{download_to_destination, download_to_tempfile, is_download_necessary};
+use crate::download::{download_to_tempfile, is_download_necessary};
 use crate::vars::current_machine_vars;
 use log::{debug, info};
 use std::io::Read;

@@ -6,6 +6,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use crate::definitions::zip::process_zip_definition;
 
 fn default_checksum_key() -> String {
     "{os}-{arch}".into()
@@ -28,6 +29,22 @@ pub struct ChecksumDefinition {
     pub key: Option<String>,
 
     pub values: HashMap<String, String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct ZipBinaryDefinition {
+    pub strip_components: u8,
+    pub members: Vec<ZipMemberDefinition>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct ZipMemberDefinition {
+    #[serde(rename = "name")]
+    pub member_name: String,
+    pub dest: String,
+    #[serde(default = "default_perms")]
+    pub perms: u32,
+    pub checksum: ChecksumDefinition,
 }
 
 #[derive(Deserialize, Debug)]
@@ -62,6 +79,9 @@ pub enum BinaryDefinition {
 
     #[serde(rename = "tar")]
     Tar(TarBinaryDefinition),
+
+    #[serde(rename = "zip")]
+    Zip(ZipBinaryDefinition),
 }
 
 #[derive(Deserialize, Debug)]
@@ -111,7 +131,11 @@ pub fn process_config_file(
         BinaryDefinition::Tar(def) => {
             process_tar_definition(&source_url, &def, target_dir, skip_checksum, dry_run)
         }
+        BinaryDefinition::Zip(def) => {
+            process_zip_definition(&source_url, &def, target_dir, dry_run)
+        }
     }?;
 
     Ok(())
 }
+
